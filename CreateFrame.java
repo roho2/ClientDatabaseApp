@@ -1,3 +1,9 @@
+/*Name: Robert Hollinger
+ * Course: CNT 4714-Spring 2021
+ * Assignment Title: Project 3 - Two-Tier Client-Server Application Development With MySQL and JDBC
+ * Date: TODO: ADD DATE WHEN COMPLETE!!*!*!*!*!*!*!*!*!*!*!
+ */
+
 package sqlClientApp;
 
 import java.sql.Connection;
@@ -8,19 +14,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
-import com.mysql.cj.jdbc.Driver;
-
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CreateFrame extends JFrame{
-	
-	
 	/**
 	 * 
 	 */
@@ -110,11 +111,9 @@ public class CreateFrame extends JFrame{
 				try {
 					Class.forName("com.mysql.cj.jdbc.Driver");
 					myConnection = DriverManager.getConnection(mainFrame.dbPanel.getURL(), mainFrame.dbPanel.getUsername(), mainFrame.dbPanel.getPassword());
-					
 					mainFrame.resultPanel.buttons.status.setText("Connected to jdbc:mysql:127.0.0.1:3306");
 				} catch (SQLException | ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null,"Check login information and try again", "Connection Error", JOptionPane.WARNING_MESSAGE);
 				}
 			}
 			//Clear command window in top right
@@ -128,42 +127,63 @@ public class CreateFrame extends JFrame{
 			//Execute command that is in command text box
 			else if(e.getActionCommand() == "execute") {
 				try {
+					if(myConnection == null) {
+						JOptionPane.showMessageDialog(null, "Must connect to database before executing commands", "Connection Error", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					//Create the SQL statement 
+					//Parameters in createStatement NEEDED for rs.beforeFirst called later
 					Statement sql = myConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
 						    ResultSet.CONCUR_READ_ONLY);
-					ResultSet rs = sql.executeQuery(mainFrame.comPanel.getCommandText());
-					ResultSetMetaData rsmd = rs.getMetaData();
-					int numOfColumns = rsmd.getColumnCount();
-					String[] columnNames = new String[numOfColumns];
+					boolean resultSetBool = sql.execute(mainFrame.comPanel.getCommandText());
 					
-					for(int i=0; i<numOfColumns; i++) {
-						columnNames[i] = rsmd.getColumnName(i+1);
-					}
-					
-					int rsCount = 0;
-					
-					while(rs.next()) {
-						rsCount++;
-					}
-					
-					String[][] data = new String[rsCount][numOfColumns];
-					int i = 0;
-					int a = 0;
-					
-					rs.beforeFirst();
-					
-					while(rs.next()) {
-						for(int j=1; j<=numOfColumns; j++) {
-							data[i][a] = rs.getString(j);
-							a++;
+					/*If execute returns true, then the query returns a ResultSet and is not
+					 * a data manipulation query. If false, it is a manipulation so go to else
+					 * and display that the change was successful
+					 */
+					if(resultSetBool == true) {
+						ResultSet rs = sql.executeQuery(mainFrame.comPanel.getCommandText());
+						ResultSetMetaData rsmd = rs.getMetaData();
+						
+						//Get number of columns and column names
+						int numOfColumns = rsmd.getColumnCount();
+						String[] columnNames = new String[numOfColumns];
+						for(int i=0; i<numOfColumns; i++) {
+							columnNames[i] = rsmd.getColumnName(i+1);
 						}
-						a=0;
-						i++;
+						
+						//find how many rows there are 
+						int rsCount = 0;
+						while(rs.next()) {
+							rsCount++;
+						}
+						
+						//Create data variable and iteration variables
+						String[][] data = new String[rsCount][numOfColumns];
+						int i = 0;
+						int a = 0;
+						
+						//Return result set back to 0 position 
+						rs.beforeFirst();
+						
+						//Loop through all rows and add data to the data array
+						while(rs.next()) {
+							for(int j=1; j<=numOfColumns; j++) {
+								data[i][a] = rs.getString(j);
+								a++;
+							}
+							a=0;
+							i++;
+						}
+						mainFrame.resultPanel.setOutputText(data, columnNames);
 					}
-					mainFrame.resultPanel.setOutputText(data, columnNames);
+					else {
+						JOptionPane.showMessageDialog(null, "Successfully updated table", "Success", JOptionPane.WARNING_MESSAGE);
+					}
+					
 					
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null,e1.getMessage(), "Database Error", JOptionPane.WARNING_MESSAGE);
 				}
 				
 			}
