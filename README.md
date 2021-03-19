@@ -4,6 +4,8 @@ Java GUI application to connect to database and execute commands
 This application allows you to connect to your MySql server and execute sql commands from the GUI.
 It is built in Java using Swing to create the GUI.
 
+NOTE: To have program work properly you must download JDBC Driver and add to CLASS path.
+
 There are 3 sections to the GUI. 
 
 1. Login Area:
