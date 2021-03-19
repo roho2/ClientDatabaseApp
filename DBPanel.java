@@ -1,3 +1,9 @@
+/*Name: Robert Hollinger
+ * Course: CNT 4714-Spring 2021
+ * Assignment Title: Project 3 - Two-Tier Client-Server Application Development With MySQL and JDBC
+ * Date: TODO: ADD DATE WHEN COMPLETE!!*!*!*!*!*!*!*!*!*!*!
+ */
+
 package sqlClientApp;
 
 import java.awt.Dimension;
@@ -10,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class DBPanel extends JPanel{
-
 	/**
 	 * 
 	 */
@@ -51,6 +56,7 @@ public class DBPanel extends JPanel{
 		passP.setMaximumSize(new Dimension(400, 35));
 		titleP.setMaximumSize(new Dimension(400, 35));
 		
+		//Create Labels and initialize input fields
 		JLabel title = new JLabel("Enter Database Information");
 		String[] driverOptions =  {"Select a Driver", "com.mysql.cj.jdbc.Driver", "Other"};
 		String[] urlOptions = {"Select database URL", "jdbc:mysql://127.0.0.1:3306/project3?useTimezone=true&serverTimezone=UTC", "Other"};
@@ -63,8 +69,7 @@ public class DBPanel extends JPanel{
 		this.username = new JTextField(20);
 		this.password = new JTextField(20);
 	
-	
-		
+		//Add labels and input fields to Sub-Panels
 		driverP.add(driverL);
 		driverP.add(this.driver);
 		urlP.add(urlL);
@@ -77,6 +82,7 @@ public class DBPanel extends JPanel{
 		
 		this.url.setPreferredSize(new Dimension(200, 25));
 		
+		//Add Sub-Panels to object
 		this.add(Box.createRigidArea(new Dimension(0,10)));
 		this.add(titleP);
 		this.add(Box.createRigidArea(new Dimension(0,5)));
@@ -87,8 +93,6 @@ public class DBPanel extends JPanel{
 		this.add(userP);
 		this.add(Box.createRigidArea(new Dimension(0,5)));
 		this.add(passP);
-		
-		
 	}
 	
 }
