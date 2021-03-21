@@ -5,6 +5,7 @@ This application allows you to connect to your MySql server and execute sql comm
 It is built in Java using Swing to create the GUI.
 
 NOTE: To have program work properly you must download JDBC Driver and add to CLASS path.
+      Download driver here: https://dev.mysql.com/downloads/connector/j/
 
 There are 3 sections to the GUI. 
 
