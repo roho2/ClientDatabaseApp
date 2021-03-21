@@ -9,12 +9,12 @@ package sqlClientApp;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -126,69 +126,30 @@ public class CreateFrame extends JFrame{
 			}
 			//Execute command that is in command text box
 			else if(e.getActionCommand() == "execute") {
+				
 				try {
 					if(myConnection == null) {
 						JOptionPane.showMessageDialog(null, "Must connect to database before executing commands", "Connection Error", JOptionPane.WARNING_MESSAGE);
 						return;
 					}
-					//Create the SQL statement 
-					//Parameters in createStatement NEEDED for rs.beforeFirst called later
-					Statement sql = myConnection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-						    ResultSet.CONCUR_READ_ONLY);
+					Statement sql = myConnection.createStatement();
 					boolean resultSetBool = sql.execute(mainFrame.comPanel.getCommandText());
 					
-					/*If execute returns true, then the query returns a ResultSet and is not
-					 * a data manipulation query. If false, it is a manipulation so go to else
-					 * and display that the change was successful
-					 */
+					//If true, statement is a query, else it is a data manipulation command
 					if(resultSetBool == true) {
+						//Create resultset, populate a JTable with it and send to printing method
 						ResultSet rs = sql.executeQuery(mainFrame.comPanel.getCommandText());
-						ResultSetMetaData rsmd = rs.getMetaData();
-						
-						//Get number of columns and column names
-						int numOfColumns = rsmd.getColumnCount();
-						String[] columnNames = new String[numOfColumns];
-						for(int i=0; i<numOfColumns; i++) {
-							columnNames[i] = rsmd.getColumnName(i+1);
-						}
-						
-						//find how many rows there are 
-						int rsCount = 0;
-						while(rs.next()) {
-							rsCount++;
-						}
-						
-						//Create data variable and iteration variables
-						String[][] data = new String[rsCount][numOfColumns];
-						int i = 0;
-						int a = 0;
-						
-						//Return result set back to 0 position 
-						rs.beforeFirst();
-						
-						//Loop through all rows and add data to the data array
-						while(rs.next()) {
-							for(int j=1; j<=numOfColumns; j++) {
-								data[i][a] = rs.getString(j);
-								a++;
-							}
-							a=0;
-							i++;
-						}
-						mainFrame.resultPanel.setOutputText(data, columnNames);
+					    JTable table = new JTable(BuildTableModel.buildTableModel(rs));
+					    mainFrame.resultPanel.setOutputText(table);
 					}
 					else {
 						JOptionPane.showMessageDialog(null, "Successfully updated table", "Success", JOptionPane.WARNING_MESSAGE);
 					}
 					
-					
 				} catch (SQLException e1) {
 					JOptionPane.showMessageDialog(null,e1.getMessage(), "Database Error", JOptionPane.WARNING_MESSAGE);
-				}
-				
+				}	
 			}
-			
-		}
-	}
-	
-}
+		}//End of method
+	}//End of listener class
+}//End of CreateFrame class

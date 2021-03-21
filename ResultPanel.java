@@ -13,7 +13,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class ResultPanel extends JPanel{
 	/**
@@ -22,49 +23,34 @@ public class ResultPanel extends JPanel{
 	private static final long serialVersionUID = 4402863995571453341L;
 	
 	ButtonsPanel buttons;
-	JTextArea output;
+	JTable output;
 	JButton clearResult;
 	
 	public ResultPanel() {
 		setUpResultPanel();
 	}
 	
-	public void setOutputText(String[][] data, String[] columnNames) {
-		
-		for(int i=0; i<columnNames.length; i++) {
-			this.output.append(columnNames[i] + "\t\t\t");
-		}
-		this.output.append("\n");
-		this.output.append("------------------------------------------------------------------------------------"
-				+ "-----------------------------------------------------------------------\n");
-		
-		for(int i=0; i<data.length; i++) {
-			for(int j=0; j<data[0].length; j++) {
-					this.output.append(data[i][j] + "\t\t\t");
-			}
-			this.output.append("\n");
-		}
-
+	//Set JTable equal to data from JTable formatted with query results
+	public void setOutputText(JTable result) {
+		this.output.setModel(result.getModel());	
 	}
 	
+	//Create new blank model and use to clear JTable
 	public void clearResultText() {
-		this.output.setText(null);
+		DefaultTableModel clearTable = new DefaultTableModel(0, 0);
+		this.output.setModel(clearTable);
 	}
 	
 	private void setUpResultPanel() {
 		//Initialize object settings, buttons, and output
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.buttons = new ButtonsPanel();
-		this.output = new JTextArea(5, 50);
+		this.output = new JTable();
 		JScrollPane scroll = new JScrollPane(this.output);
 		scroll.setMaximumSize(new Dimension(800, 310));
 		scroll.setPreferredSize(new Dimension(800, 310));
-		
-		//Set output object settings
-		this.output.setEditable(false);
-		//this.output.setLineWrap(true);
-		//this.output.setWrapStyleWord(true);
 		this.clearResult = new JButton("Clear Result Window");
+		
 		
 		//Add everything to the object
 		this.add(this.buttons);
