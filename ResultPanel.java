@@ -1,12 +1,13 @@
 /*Name: Robert Hollinger
  * Course: CNT 4714-Spring 2021
  * Assignment Title: Project 3 - Two-Tier Client-Server Application Development With MySQL and JDBC
- * Date: TODO: ADD DATE WHEN COMPLETE!!*!*!*!*!*!*!*!*!*!*!
+ * Date: March 21st, 2021
  */
 
 package sqlClientApp;
 
 import java.awt.Dimension;
+import java.io.Serial;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -20,6 +21,7 @@ public class ResultPanel extends JPanel{
 	/**
 	 * 
 	 */
+	@Serial
 	private static final long serialVersionUID = 4402863995571453341L;
 	
 	ButtonsPanel buttons;
