@@ -19,12 +19,13 @@ public class CreateFrame extends JFrame {
      */
     @Serial
     private static final long serialVersionUID = -3566352670787638960L;
+
     public static CreateFrame mainFrame = null;
     public Connection myConnection;
-    ButtonHandler bh = new ButtonHandler(this);
-    DBPanel dbPanel;
-    ResultPanel resultPanel;
-    CommandPanel comPanel;
+    private final ButtonHandler bh = new ButtonHandler(this);
+    private DBPanel dbPanel;
+    private ResultPanel resultPanel;
+    private CommandPanel comPanel;
 
     public CreateFrame() {
         createGUI();
@@ -39,15 +40,28 @@ public class CreateFrame extends JFrame {
     }
 
     public void createGUI() {
+        setUpFrameDetails();
+        setConstraints();
+        createButtonActionListeners();
+    }
+
+    private void setUpFrameDetails(){
         this.setTitle("Client App - (CNT4714 - Spring 2021)");
         this.setSize(1024, 700);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLayout(new GridBagLayout());
+        setUpPanels();
+    }
 
+
+    private void setUpPanels(){
         dbPanel = new DBPanel();
         comPanel = new CommandPanel();
         resultPanel = new ResultPanel();
+    }
 
+
+    private void setConstraints(){
         Constraints constraint = new Constraints();
 
         constraint.setConstraintsForDBPanel();
@@ -56,8 +70,10 @@ public class CreateFrame extends JFrame {
         this.add(comPanel, constraint.getConstraint());
         constraint.setConstraintsForResultPanel();
         this.add(resultPanel, constraint.getConstraint());
+    }
 
-        //create action listeners for buttons
+
+    private void createButtonActionListeners() {
         resultPanel.buttons.clearCommand.addActionListener(bh);
         resultPanel.buttons.clearCommand.setActionCommand("clearCommand");
 
@@ -113,7 +129,7 @@ public class CreateFrame extends JFrame {
 
                         //If true, statement is a query, else it is a data manipulation command
                         if (resultSetBool) {
-                            //Create resultset, populate a JTable with it and send to printing method
+                            //Create result set, populate a JTable with it and send to printing method
                             ResultSet rs = sql.executeQuery(mainFrame.comPanel.getCommandText());
                             JTable table = new JTable(BuildTableModel.buildTableModel(rs));
                             mainFrame.resultPanel.setOutputText(table);
