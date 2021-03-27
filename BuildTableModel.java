@@ -13,19 +13,17 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 public class BuildTableModel {
-    public static DefaultTableModel buildTableModel(ResultSet rs)
-            throws SQLException {
 
-        ResultSetMetaData rsmd = rs.getMetaData();
+    private static ResultSetMetaData resultSetMetaData;
+    private static int columnCount;
 
-        //Get the names of the columns
-        Vector<String> columnNames = new Vector<>();
-        int columnCount = rsmd.getColumnCount();
-        for (int column = 1; column <= columnCount; column++) {
-            columnNames.add(rsmd.getColumnName(column));
-        }
+    public static DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
+        Vector<String> columnNames = getColumnNames(rs);
+        Vector<Vector<Object>> data = getTableData(rs);
+        return new DefaultTableModel(data, columnNames);
+    }
 
-        //Get the data for the table
+    private static Vector<Vector<Object>> getTableData(ResultSet rs) throws SQLException {
         Vector<Vector<Object>> data = new Vector<>();
         while (rs.next()) {
             Vector<Object> vector = new Vector<>();
@@ -34,8 +32,16 @@ public class BuildTableModel {
             }
             data.add(vector);
         }
+        return data;
+    }
 
-        return new DefaultTableModel(data, columnNames);
-
+    private static Vector<String> getColumnNames(ResultSet resultSet) throws SQLException{
+        resultSetMetaData = resultSet.getMetaData();
+        Vector<String> columnNames = new Vector<>();
+        columnCount = resultSetMetaData.getColumnCount();
+        for (int column = 1; column <= columnCount; column++) {
+            columnNames.add(resultSetMetaData.getColumnName(column));
+        }
+        return columnNames;
     }
 }
